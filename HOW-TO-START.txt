@@ -1,0 +1,74 @@
+Indian Law — Plain Guide
+How to start the web app
+==========================
+
+FIRST-TIME SETUP (once per machine)
+-----------------------------------
+
+1. Install Python 3.10+ from https://www.python.org/
+
+2. Install Node.js (LTS) from https://nodejs.org/
+
+3. Open PowerShell in this project folder:
+   D:\GitHub-Projects\CONSTITUTION OF INDIA
+
+4. Install Python dependencies:
+   pip install -r requirements.txt
+
+5. Build the law content from PDFs (run when PDFs change):
+   python scripts/extract_constitution.py
+   python scripts/extract_ipc.py
+
+6. Install web app dependencies:
+   cd web
+   npm install
+   cd ..
+
+
+EVERY TIME YOU WANT TO RUN THE APP
+----------------------------------
+
+1. Open PowerShell in:
+   D:\GitHub-Projects\CONSTITUTION OF INDIA
+
+2. Start the dev server:
+   cd web
+   npm run dev
+
+3. Open the URL shown in the terminal, usually:
+   http://localhost:5173/
+
+4. Use the tabs at the top:
+   - Constitution
+   - IPC
+
+5. Search by section/article number (e.g. 302) or keywords.
+
+6. Stop the server: press Ctrl+C in the PowerShell window.
+
+
+OPTIONAL: PRODUCTION BUILD
+----------------------------
+
+   cd web
+   npm run build
+   npm run preview
+
+   Then open the preview URL shown (often http://localhost:4173/).
+
+
+TROUBLESHOOTING
+---------------
+
+- "Could not load content" → Run the extract scripts (step 5 in first-time setup).
+- Port 5173 in use → Close the other terminal running npm run dev, or use the alternate port Vite prints.
+- PDF updated → Re-run extract_constitution.py and/or extract_ipc.py, then refresh the browser.
+
+
+FILES
+-----
+
+- Constitution PDF: 20240716890312078.pdf
+- IPC PDF: ipc-english.pdf
+- App code: web\
+- More detail: README.md

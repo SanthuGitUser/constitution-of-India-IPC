@@ -1,0 +1,11 @@
+# Web
+web/node_modules/
+web/dist/
+
+# Python
+scripts/__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+Thumbs.db
