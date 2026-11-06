@@ -4,17 +4,25 @@ Web app for the **Constitution of India** and **Indian Penal Code (IPC)**: plain
 
 ## Deploy on GitHub Pages
 
-The workflow **`.github/workflows/deploy-pages.yml`** builds `web` and pushes **`web/dist`** to the **`gh-pages`** branch.
+Production build outputs to **`docs/`** at the repo root (not `web/dist`).
 
-1. **Settings → Actions → General → Workflow permissions**: **Read and write** (needed to create `gh-pages`).
-2. Push to `main` (or `master`).
-3. **Settings → Pages → Source**: **Deploy from a branch** → branch **`gh-pages`**, folder **`/` (root)** — **not** `main` (your app lives in `web/`, so `main` has no root `index.html` → 404).
-4. **Actions** must show a **green** “Deploy to GitHub Pages” run (first successful run creates `gh-pages`).
-4. Site: `https://santhugituser.github.io/constitution-of-India-IPC/`
+```powershell
+cd web
+npm ci
+npm run build
+cd ..
+git add docs
+git commit -m "Update Pages build"
+git push
+```
 
-Details and troubleshooting: **[GITHUB-PAGES.md](GITHUB-PAGES.md)**.
+**Settings → Pages:** **Deploy from a branch** → **`main`** (or `master`) → folder **`/docs`**.
 
-The build uses `base: /constitution-of-India-IPC/` so assets load under the project URL. If you rename the repository, edit `repoName` in `web/vite.config.ts`.
+Site: `https://santhugituser.github.io/constitution-of-India-IPC/`
+
+Full steps: **[GITHUB-PAGES.md](GITHUB-PAGES.md)**.
+
+The build uses `base: /constitution-of-India-IPC/`. If you rename the repository, edit `repoName` in `web/vite.config.ts`.
 
 ## Quick start
 

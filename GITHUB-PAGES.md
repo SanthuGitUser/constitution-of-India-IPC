@@ -4,87 +4,74 @@ Your site URL:
 
 `https://santhugituser.github.io/constitution-of-India-IPC/`
 
-That URL only works after **built files** (including **`index.html`**) are published. A 404 usually means **nothing is deployed** or **Settings → Pages points at the wrong source**.
-
-## Fix these two first (most common)
-
-### 1) Actions must be allowed to write (or `gh-pages` never gets created)
-
-**Settings → Actions → General** → scroll to **Workflow permissions**
-
-- Select **Read and write permissions**
-- Check **Allow GitHub Actions to create and approve pull requests** if shown
-- Save
-
-Then **Actions** → re-run the failed workflow, or push an empty commit.
-
-### 2) Pages must use branch `gh-pages`, not `main`
-
-**Settings → Pages** → **Build and deployment**
-
-- **Source**: **Deploy from a branch**
-- **Branch**: **`gh-pages`** (not main/master)
-- **Folder**: **`/` (root)**
-
-If **`gh-pages` is not in the list**, the workflow has not succeeded yet (or step 1 blocked it). Fix permissions, run the workflow again, wait ~1 minute, refresh the Pages settings page.
-
 ---
 
-## How this repo deploys (recommended)
+## Easiest fix (no Actions required)
 
-The workflow **`.github/workflows/deploy-pages.yml`**:
+The app builds into a **`docs/`** folder in the repo root. GitHub Pages can serve that folder from **`main`**.
 
-1. Builds the Vite app (`web/dist`).
-2. Pushes those static files to the **`gh-pages`** branch (using [peaceiris/actions-gh-pages](https://github.com/peaceiris/actions-gh-pages)).
-
-You must point GitHub Pages at **that branch**.
-
-### Step A — Push the latest code
+### 1. Build on your computer
 
 ```powershell
-git add -A
-git commit -m "Deploy site to gh-pages branch"
+cd web
+npm ci
+npm run build
+cd ..
+```
+
+This creates/updates **`docs/`** (including **`docs/index.html`**).
+
+### 2. Commit and push `docs/`
+
+```powershell
+git add docs
+git commit -m "Add GitHub Pages build output"
 git push origin main
 ```
 
-(Use `master` if that is your default branch.)
+(Use `master` instead of `main` if that is your default branch.)
 
-### Step B — Enable Actions (if needed)
+### 3. Configure Pages (this step fixes most 404s)
 
-**Settings → Actions → General → Actions permissions** → allow workflows for this repository (at least “Allow all actions and reusable workflows” or allow the peaceiris action).
+On GitHub: **Settings → Pages → Build and deployment**
 
-### Step C — Configure Pages (this fixes most 404s)
+| Setting | Value |
+|--------|--------|
+| **Source** | **Deploy from a branch** |
+| **Branch** | **`main`** (or **`master`**) |
+| **Folder** | **`/docs`** |
 
-**Settings → Pages → Build and deployment**
+Not **`/` (root)** — your `index.html` is under **`docs/`**, not the repo root.
 
-- **Source**: **Deploy from a branch**
-- **Branch**: **`gh-pages`** folder **`/` (root)**  
-- Save
+Save. Wait **1–3 minutes**, then open the site in **Incognito** or **Ctrl+Shift+R**.
 
-Wait **1–3 minutes**. The first run creates the `gh-pages` branch after the workflow succeeds.
+### 4. Public repo
 
-### Step D — Confirm the workflow ran
-
-**Actions** tab → workflow **“Deploy to GitHub Pages”** → latest run **green**.
-
-If it is red, open the log and fix the error (e.g. `npm ci` failing).
-
-### Step E — Hard refresh
-
-Incognito window or **Ctrl+Shift+R** on the site URL.
+Project sites on a **free account** are normally **public** repos. If the repo is **private**, Pages may not work the same way.
 
 ---
 
-## If you still see 404
+## After you change source code
 
-| Check | What to do |
-|--------|------------|
-| Workflow never ran | Push again; open **Actions** and run **workflow_dispatch** if needed. |
-| Pages still on “GitHub Actions” | Switch to **Deploy from a branch** + **`gh-pages`** as above. |
-| `gh-pages` branch missing | Wait for green workflow; refresh the branch dropdown in Settings → Pages. |
-| Private repo on free GitHub | Public project sites work on free accounts; **private** repos need **GitHub Pro** for public Pages in many cases. |
-| Wrong repo URL | Path must match `base` in `web/vite.config.ts` (`constitution-of-India-IPC`). Rename repo → update `repoName` there. |
+Whenever you change `web/`, run **`npm run build`** in **`web/`** again, commit **`docs/`**, and push.
 
-## Repo / URL name
+---
 
-Vite uses `base: /constitution-of-India-IPC/`. If you **rename** the GitHub repository, change `repoName` in **`web/vite.config.ts`** to match exactly, push, and let the workflow redeploy.
+## Optional: GitHub Actions
+
+If you use **`.github/workflows/deploy-pages.yml`**, you must still set **Pages** to either:
+
+- **Branch `gh-pages` / root** (if that workflow successfully updates that branch), or  
+- **`main` / `docs`** after you build and commit **`docs/`** locally (simplest).
+
+Do **not** leave Pages on **`main` / `/`** — there is no **`index.html`** at the repository root (only under **`docs/`** or **`gh-pages`**).
+
+---
+
+## Troubleshooting
+
+| Symptom | Fix |
+|--------|-----|
+| 404 at project URL | Pages must be **`/docs`** on the branch you pushed, or **`gh-pages` / root**. |
+| Works locally, not on GitHub | Forgot to **`git push`** **`docs/`** or wrong branch/folder in Settings. |
+| Assets 404 | In **`web/vite.config.ts`**, **`repoName`** must match the GitHub repo name exactly. |
