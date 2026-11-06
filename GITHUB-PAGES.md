@@ -6,6 +6,30 @@ Your site URL:
 
 That URL only works after **built files** (including **`index.html`**) are published. A 404 usually means **nothing is deployed** or **Settings → Pages points at the wrong source**.
 
+## Fix these two first (most common)
+
+### 1) Actions must be allowed to write (or `gh-pages` never gets created)
+
+**Settings → Actions → General** → scroll to **Workflow permissions**
+
+- Select **Read and write permissions**
+- Check **Allow GitHub Actions to create and approve pull requests** if shown
+- Save
+
+Then **Actions** → re-run the failed workflow, or push an empty commit.
+
+### 2) Pages must use branch `gh-pages`, not `main`
+
+**Settings → Pages** → **Build and deployment**
+
+- **Source**: **Deploy from a branch**
+- **Branch**: **`gh-pages`** (not main/master)
+- **Folder**: **`/` (root)**
+
+If **`gh-pages` is not in the list**, the workflow has not succeeded yet (or step 1 blocked it). Fix permissions, run the workflow again, wait ~1 minute, refresh the Pages settings page.
+
+---
+
 ## How this repo deploys (recommended)
 
 The workflow **`.github/workflows/deploy-pages.yml`**:

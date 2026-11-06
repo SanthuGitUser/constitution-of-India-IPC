@@ -1,5 +1,12 @@
 # Builds the Vite app and pushes static files to the `gh-pages` branch.
-# Pages setup: Repo → Settings → Pages → Deploy from branch → gh-pages / / (root)
+#
+# REQUIRED on GitHub:
+#   Settings → Actions → General → Workflow permissions → "Read and write permissions"
+#   (Otherwise the workflow cannot create/update the gh-pages branch.)
+#
+# REQUIRED for the live URL:
+#   Settings → Pages → Build and deployment → Source: "Deploy from a branch"
+#   Branch: gh-pages  /  Folder: / (root)
 
 name: Deploy to GitHub Pages
 
@@ -8,6 +15,7 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
+# Default token must be allowed to push to gh-pages (repo setting above).
 permissions:
   contents: write
 
@@ -37,13 +45,19 @@ jobs:
       - name: Verify site output
         run: |
           test -f web/dist/index.html || (echo "Missing index.html — build failed" && exit 1)
+          echo "--- Built files (first 30) ---"
+          ls -la web/dist | head -30
 
-      - name: SPA fallback (subpath refresh)
+      - name: SPA fallback (refresh on subpaths)
         run: cp web/dist/index.html web/dist/404.html
 
       - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./web/dist
-          force_orphan: true
+          branch: gh-pages
+          folder: web/dist
+          clean: true
+
+      - name: Reminder (read in Actions log)
+        run: |
+          echo "::notice::If the site shows 404, set: Repo Settings → Pages → Deploy from branch → gh-pages / (root). Also enable Workflow permissions Read and write."

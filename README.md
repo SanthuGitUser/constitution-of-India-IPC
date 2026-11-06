@@ -6,9 +6,10 @@ Web app for the **Constitution of India** and **Indian Penal Code (IPC)**: plain
 
 The workflow **`.github/workflows/deploy-pages.yml`** builds `web` and pushes **`web/dist`** to the **`gh-pages`** branch.
 
-1. Push to `main` (or `master`).
-2. **Settings → Pages → Source**: **Deploy from a branch** → branch **`gh-pages`**, folder **`/` (root)**.
-3. **Actions** must show a **green** “Deploy to GitHub Pages” run (first push creates `gh-pages`).
+1. **Settings → Actions → General → Workflow permissions**: **Read and write** (needed to create `gh-pages`).
+2. Push to `main` (or `master`).
+3. **Settings → Pages → Source**: **Deploy from a branch** → branch **`gh-pages`**, folder **`/` (root)** — **not** `main` (your app lives in `web/`, so `main` has no root `index.html` → 404).
+4. **Actions** must show a **green** “Deploy to GitHub Pages” run (first successful run creates `gh-pages`).
 4. Site: `https://santhugituser.github.io/constitution-of-India-IPC/`
 
 Details and troubleshooting: **[GITHUB-PAGES.md](GITHUB-PAGES.md)**.
