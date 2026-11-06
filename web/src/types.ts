@@ -34,17 +34,21 @@ export type LawData = {
 
 export type LawTab = "constitution" | "ipc";
 
+/** JSON paths respect Vite `base` (needed for GitHub Pages under /<repo>/). */
+const dataPath = (name: string) =>
+  `${import.meta.env.BASE_URL}data/${name}`.replace(/\/+/g, "/");
+
 export const LAW_CONFIG: Record<
   LawTab,
   { path: string; defaultId: string; shortName: string }
 > = {
   constitution: {
-    path: "/data/constitution.json",
+    path: dataPath("constitution.json"),
     defaultId: "preamble",
     shortName: "Constitution",
   },
   ipc: {
-    path: "/data/ipc.json",
+    path: dataPath("ipc.json"),
     defaultId: "preamble",
     shortName: "IPC",
   },

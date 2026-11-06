@@ -1,6 +1,19 @@
 # Indian Law — Plain Guide
 
-Web app for the **Constitution of India** and **Indian Penal Code (IPC)**: plain-language summaries, search, and official text on **ℹ** hover/focus/tap.
+Web app for the **Constitution of India** and **Indian Penal Code (IPC)**: plain-language summaries, search, and official text side by side with a simple summary.
+
+## Deploy on GitHub Pages
+
+The repo includes a workflow (`.github/workflows/deploy-pages.yml`) that builds the Vite app and publishes `web/dist`.
+
+1. Push these files to GitHub.
+2. On the repo: **Settings → Pages → Build and deployment → Source**: choose **GitHub Actions** (not “Deploy from a branch”).
+3. Open **Actions**, run **Deploy to GitHub Pages** (or push to `main` so it runs).
+4. After it finishes, the site is at  
+   `https://santhugituser.github.io/constitution-of-India-IPC/`  
+   (wait a minute for the first deploy.)
+
+The build uses `base: /constitution-of-India-IPC/` so assets load correctly. If you rename the repository, edit `repoName` in `web/vite.config.ts` to match the new name exactly.
 
 ## Quick start
 
