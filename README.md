@@ -4,16 +4,16 @@ Web app for the **Constitution of India** and **Indian Penal Code (IPC)**: plain
 
 ## Deploy on GitHub Pages
 
-The repo includes a workflow (`.github/workflows/deploy-pages.yml`) that builds the Vite app and publishes `web/dist`.
+The workflow **`.github/workflows/deploy-pages.yml`** builds `web` and pushes **`web/dist`** to the **`gh-pages`** branch.
 
-1. Push these files to GitHub.
-2. On the repo: **Settings → Pages → Build and deployment → Source**: choose **GitHub Actions** (not “Deploy from a branch”).
-3. Open **Actions**, run **Deploy to GitHub Pages** (or push to `main` so it runs).
-4. After it finishes, the site is at  
-   `https://santhugituser.github.io/constitution-of-India-IPC/`  
-   (wait a minute for the first deploy.)
+1. Push to `main` (or `master`).
+2. **Settings → Pages → Source**: **Deploy from a branch** → branch **`gh-pages`**, folder **`/` (root)**.
+3. **Actions** must show a **green** “Deploy to GitHub Pages” run (first push creates `gh-pages`).
+4. Site: `https://santhugituser.github.io/constitution-of-India-IPC/`
 
-The build uses `base: /constitution-of-India-IPC/` so assets load correctly. If you rename the repository, edit `repoName` in `web/vite.config.ts` to match the new name exactly.
+Details and troubleshooting: **[GITHUB-PAGES.md](GITHUB-PAGES.md)**.
+
+The build uses `base: /constitution-of-India-IPC/` so assets load under the project URL. If you rename the repository, edit `repoName` in `web/vite.config.ts`.
 
 ## Quick start
 
