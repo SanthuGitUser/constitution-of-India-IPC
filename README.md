@@ -4,23 +4,13 @@ Web app for the **Constitution of India** and **Indian Penal Code (IPC)**: plain
 
 ## Deploy on GitHub Pages
 
-Production build outputs to **`docs/`** at the repo root (not `web/dist`).
+**Easiest:** push the repo, enable **Actions → read/write**, let **`.github/workflows/pages.yml`** run, then **Settings → Pages** → branch **`gh-pages`** / folder **`/`**.
 
-```powershell
-cd web
-npm ci
-npm run build
-cd ..
-git add docs
-git commit -m "Update Pages build"
-git push
-```
-
-**Settings → Pages:** **Deploy from a branch** → **`main`** (or `master`) → folder **`/docs`**.
+**Or** build locally (`cd web` → `npm run build`), commit **`docs/`**, set Pages to **`main`** / **`/docs`**.
 
 Site: `https://santhugituser.github.io/constitution-of-India-IPC/`
 
-Full steps: **[GITHUB-PAGES.md](GITHUB-PAGES.md)**.
+Full checklist: **[GITHUB-PAGES.md](GITHUB-PAGES.md)**.
 
 The build uses `base: /constitution-of-India-IPC/`. If you rename the repository, edit `repoName` in `web/vite.config.ts`.
 

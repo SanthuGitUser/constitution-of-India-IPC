@@ -1,77 +1,90 @@
-# GitHub Pages — fix “404 File not found”
+# GitHub Pages — stop the 404
 
-Your site URL:
+Live URL (project site):
 
 `https://santhugituser.github.io/constitution-of-India-IPC/`
 
+That only works if GitHub is serving files that contain **`index.html`**. A **404** means GitHub Pages is **not** publishing your build yet.
+
 ---
 
-## Easiest fix (no Actions required)
+## Option A — Automatic (recommended)
 
-The app builds into a **`docs/`** folder in the repo root. GitHub Pages can serve that folder from **`main`**.
+The workflow **`.github/workflows/pages.yml`** builds on every push and updates the **`gh-pages`** branch.
 
-### 1. Build on your computer
+### 1) Push this repo to GitHub
 
-```powershell
-cd web
-npm ci
-npm run build
-cd ..
-```
+Make sure the workflow file is on your default branch (`main` or `master`).
 
-This creates/updates **`docs/`** (including **`docs/index.html`**).
+### 2) Allow Actions to write
 
-### 2. Commit and push `docs/`
+**Settings → Actions → General** → **Workflow permissions**
 
-```powershell
-git add docs
-git commit -m "Add GitHub Pages build output"
-git push origin main
-```
+- **Read and write permissions** → **Save**
 
-(Use `master` instead of `main` if that is your default branch.)
+### 3) Run the workflow
 
-### 3. Configure Pages (this step fixes most 404s)
+**Actions → “Publish GitHub Pages”** → should turn **green**.
 
-On GitHub: **Settings → Pages → Build and deployment**
+If it fails, open the log and fix errors (e.g. `npm ci` failing).
 
-| Setting | Value |
+### 4) Point Pages at `gh-pages`
+
+**Settings → Pages**
+
+| Field | Value |
 |--------|--------|
 | **Source** | **Deploy from a branch** |
-| **Branch** | **`main`** (or **`master`**) |
-| **Folder** | **`/docs`** |
+| **Branch** | **`gh-pages`** |
+| **Folder** | **`/` (root)** |
 
-Not **`/` (root)** — your `index.html` is under **`docs/`**, not the repo root.
+**Not** `main` with `/` (root) — `main` has no `index.html` at repo root.
 
-Save. Wait **1–3 minutes**, then open the site in **Incognito** or **Ctrl+Shift+R**.
+### 5) Confirm
 
-### 4. Public repo
+On GitHub, switch branch to **`gh-pages`**. You must see **`index.html`** at the **top** of the file list.
 
-Project sites on a **free account** are normally **public** repos. If the repo is **private**, Pages may not work the same way.
-
----
-
-## After you change source code
-
-Whenever you change `web/`, run **`npm run build`** in **`web/`** again, commit **`docs/`**, and push.
+Wait 1–3 minutes, then open the site in **Incognito**.
 
 ---
 
-## Optional: GitHub Actions
+## Option B — Manual (no Actions)
 
-If you use **`.github/workflows/deploy-pages.yml`**, you must still set **Pages** to either:
+1. On your PC:
 
-- **Branch `gh-pages` / root** (if that workflow successfully updates that branch), or  
-- **`main` / `docs`** after you build and commit **`docs/`** locally (simplest).
+   ```powershell
+   cd web
+   npm ci
+   npm run build
+   ```
 
-Do **not** leave Pages on **`main` / `/`** — there is no **`index.html`** at the repository root (only under **`docs/`** or **`gh-pages`**).
+2. Commit **everything under `docs/`**:
+
+   ```powershell
+   cd ..
+   git add docs
+   git commit -m "Add site build"
+   git push
+   ```
+
+3. **Settings → Pages**
+
+   - Branch: **`main`** (or `master`)
+   - Folder: **`/docs`**
 
 ---
 
-## Troubleshooting
+## Quick checks
 
-| Symptom | Fix |
-|--------|-----|
-| 404 at project URL | Pages must be **`/docs`** on the branch you pushed, or **`gh-pages` / root**. |
-| Works locally, not on GitHub | Forgot to **`git push`** **`docs/`** or wrong branch/folder in Settings. |
-| Assets 404 | In **`web/vite.config.ts`**, **`repoName`** must match the GitHub repo name exactly. |
+| Check | What you want |
+|--------|----------------|
+| **`gh-pages` branch** | Exists and contains **`index.html`** (Option A) |
+| **`docs/` on `main`** | Exists and contains **`index.html`** (Option B) |
+| **Pages settings** | Matches Option A (`gh-pages` / root) or B (`main` / `docs`) |
+| **Public repo** | Private repos often cannot publish a **public** Pages site on a free account |
+
+---
+
+## Repo name vs URL
+
+The build uses `base: /constitution-of-India-IPC/`. That path must match the **repository name** on GitHub. If you rename the repo, change **`repoName`** in **`web/vite.config.ts`** and redeploy.
