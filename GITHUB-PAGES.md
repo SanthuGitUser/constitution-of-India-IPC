@@ -1,90 +1,65 @@
-# GitHub Pages — stop the 404
+# GitHub Pages — fix 404
 
-Live URL (project site):
+URL: `https://santhugituser.github.io/constitution-of-India-IPC/`
 
-`https://santhugituser.github.io/constitution-of-India-IPC/`
-
-That only works if GitHub is serving files that contain **`index.html`**. A **404** means GitHub Pages is **not** publishing your build yet.
+A **404** here means GitHub is **not** publishing your built site. The usual mistake is picking the **wrong** “Source” in **Settings → Pages**.
 
 ---
 
-## Option A — Automatic (recommended)
+## Use this setup (one workflow)
 
-The workflow **`.github/workflows/pages.yml`** builds on every push and updates the **`gh-pages`** branch.
+The repo has **`.github/workflows/pages.yml`**. It builds **`docs/`** and deploys with **GitHub Actions**.
 
-### 1) Push this repo to GitHub
+### Step 1 — Push the workflow
 
-Make sure the workflow file is on your default branch (`main` or `master`).
+Push your code so **`pages.yml`** is on **`main`** (or **`master`**).
 
-### 2) Allow Actions to write
+### Step 2 — Pages source must be “GitHub Actions”
 
-**Settings → Actions → General** → **Workflow permissions**
+**Repository → Settings → Pages**
 
-- **Read and write permissions** → **Save**
+Under **Build and deployment**:
 
-### 3) Run the workflow
+- **Source:** **GitHub Actions**  
+- **Not** “Deploy from a branch” for this setup.
 
-**Actions → “Publish GitHub Pages”** → should turn **green**.
+If you see “Deploy from a branch” with **`main` / `/`** or **`main` / `/docs`**, the site may still 404 because nothing matches what the workflow publishes.
 
-If it fails, open the log and fix errors (e.g. `npm ci` failing).
+### Step 3 — Let the workflow run
 
-### 4) Point Pages at `gh-pages`
+**Actions → “Deploy GitHub Pages”** → latest run **green**.
 
-**Settings → Pages**
+If it fails, open the log (often `npm ci`, missing `package-lock.json`, or permissions).
 
-| Field | Value |
-|--------|--------|
-| **Source** | **Deploy from a branch** |
-| **Branch** | **`gh-pages`** |
-| **Folder** | **`/` (root)** |
+### Step 4 — First-time “github-pages” environment
 
-**Not** `main` with `/` (root) — `main` has no `index.html` at repo root.
+The first deploy may ask you to **approve** the **`github-pages`** environment — do that if prompted.
 
-### 5) Confirm
+### Step 5 — Wait + incognito
 
-On GitHub, switch branch to **`gh-pages`**. You must see **`index.html`** at the **top** of the file list.
-
-Wait 1–3 minutes, then open the site in **Incognito**.
+Wait **1–3 minutes**, then open the URL in a **private window**.
 
 ---
 
-## Option B — Manual (no Actions)
+## If you insist on “Deploy from a branch”
 
-1. On your PC:
+Then **do not** use **`main` / `/`**: there is no **`index.html`** at repo root.
 
-   ```powershell
-   cd web
-   npm ci
-   npm run build
-   ```
+Either:
 
-2. Commit **everything under `docs/`**:
+- Branch **`gh-pages`**, folder **`/`**, with **`index.html`** at top level (needs a separate process), **or**
+- Branch **`main`**, folder **`/docs`**, **and** you **commit** the **`docs/`** folder after `cd web && npm run build`.
 
-   ```powershell
-   cd ..
-   git add docs
-   git commit -m "Add site build"
-   git push
-   ```
-
-3. **Settings → Pages**
-
-   - Branch: **`main`** (or `master`)
-   - Folder: **`/docs`**
+The workflow above avoids that and uses **GitHub Actions** only.
 
 ---
 
-## Quick checks
+## Private repo
 
-| Check | What you want |
-|--------|----------------|
-| **`gh-pages` branch** | Exists and contains **`index.html`** (Option A) |
-| **`docs/` on `main`** | Exists and contains **`index.html`** (Option B) |
-| **Pages settings** | Matches Option A (`gh-pages` / root) or B (`main` / `docs`) |
-| **Public repo** | Private repos often cannot publish a **public** Pages site on a free account |
+On a **free** GitHub account, **public** GitHub Pages often needs a **public** repo. Private + public site may be blocked.
 
 ---
 
-## Repo name vs URL
+## Repo name vs assets
 
-The build uses `base: /constitution-of-India-IPC/`. That path must match the **repository name** on GitHub. If you rename the repo, change **`repoName`** in **`web/vite.config.ts`** and redeploy.
+`web/vite.config.ts` uses `repoName = "constitution-of-India-IPC"`. The GitHub repo name (in the URL) **must** match **exactly** (including case).

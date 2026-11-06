@@ -4,7 +4,7 @@ Web app for the **Constitution of India** and **Indian Penal Code (IPC)**: plain
 
 ## Deploy on GitHub Pages
 
-**Easiest:** push the repo, enable **Actions → read/write**, let **`.github/workflows/pages.yml`** run, then **Settings → Pages** → branch **`gh-pages`** / folder **`/`**.
+**Easiest:** push the repo, run **`.github/workflows/pages.yml`**, then **Settings → Pages** → **Source: GitHub Actions** (not “Deploy from a branch”).
 
 **Or** build locally (`cd web` → `npm run build`), commit **`docs/`**, set Pages to **`main`** / **`/docs`**.
 

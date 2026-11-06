@@ -1,11 +1,10 @@
-# Builds the site and deploys to the gh-pages branch.
-# You do NOT need to commit the docs/ folder when this workflow is enabled.
+# Builds the Vite app → docs/ and deploys via GitHub’s official Pages action.
 #
-# After the first green run:
-#   Settings → Pages → Source: Deploy from a branch
-#   Branch: gh-pages  /  Folder: / (root)
+# REQUIRED after first successful run:
+#   Settings → Pages → Build and deployment → Source: “GitHub Actions”
+#   (NOT “Deploy from a branch” — that would ignore this deploy.)
 
-name: Publish GitHub Pages
+name: Deploy GitHub Pages
 
 on:
   push:
@@ -13,14 +12,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: github-pages
+  group: pages
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,18 +32,27 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
 
-      - name: Install and build (outputs to docs/)
+      - name: Install and build (writes ../docs)
         working-directory: web
         run: |
           npm ci
           npm run build
 
-      - name: Verify index.html exists
-        run: test -f docs/index.html
+      - name: Verify output
+        run: |
+          test -f docs/index.html || (echo "docs/index.html missing" && exit 1)
+          cp docs/index.html docs/404.html
 
-      - name: Deploy to gh-pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: docs
-          clean: true
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
